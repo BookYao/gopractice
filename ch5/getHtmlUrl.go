@@ -37,6 +37,7 @@ func visit(links []string, n *html.Node) []string {
 	return links
 }
 
+//Usage: ./fetchUrl https://qq.com | ./getHtmlUrl
 func main() {
 	fmt.Println("test Get HTML URL")
 
