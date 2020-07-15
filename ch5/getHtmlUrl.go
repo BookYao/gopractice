@@ -18,14 +18,21 @@ func visit(links []string, n *html.Node) []string {
 		}
 	}
 
-	//fmt.Println("fistChild:", n.FirstChild)
-	//for c := n.FirstChild; c != nil; c =  c.NextSibling {
-	//	links = visit(links, c)
-	//}
-	links = visit(links, n.FirstChild)
-	links = visit(links, n.NextSibling)
+	/*fmt.Println("fistChild:", n.FirstChild)
+	for c := n.FirstChild; c != nil; c =  c.NextSibling {
+		links = visit(links, c)
+	}*/
+	if n.FirstChild != nil {
+		links = visit(links, n.FirstChild)
+	}
+
+	if n.NextSibling != nil {
+		links = visit(links, n.NextSibling)
+	}
+
 	return links
 }
+
 func main() {
 	fmt.Println("test Get HTML URL")
 
@@ -34,7 +41,6 @@ func main() {
 		log.Fatal("HTML Parse failed!")
 	}
 
-	fmt.Println("Start visit...")
 	for _, link := range visit(nil, doc) {
 		fmt.Println(link)
 	}
