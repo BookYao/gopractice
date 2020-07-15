@@ -1,3 +1,7 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+* 练习 5.2： 编写函数，记录在HTML树中出现的同名元素的次数。
+* * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 package main
 
 import (
@@ -7,16 +11,19 @@ import (
 	"os"
 )
 
-func outline(url []string, node *html.Node) []string {
+/*
+ HTML doc 先存入到 slice， 然后再统计 elem 个数
+ */
+func outline(elem []string, node *html.Node) []string {
 	if node.Type == html.ElementNode {
-		url = append(url, node.Data)
+		elem = append(elem, node.Data)
 		//fmt.Println("URL:", url)
 	}
 
 	for n := node.FirstChild; n != nil; n = n.NextSibling {
-		url = outline(url, n)
+		elem = outline(elem, n)
 	}
-	return url
+	return elem
 }
 
 func calSameStringCount(str []string) map[string]int {
@@ -29,6 +36,22 @@ func calSameStringCount(str []string) map[string]int {
 	return result
 }
 
+/*
+递归方法统计 elem 个数
+*/
+func calSameStringCount2(result map[string] int, node *html.Node) map[string]int {
+	if node.Type == html.ElementNode {
+		result[node.Data]++
+	}
+
+	for n := node.FirstChild; n != nil; n = n.NextSibling {
+		result = calSameStringCount2(result, n)
+	}
+
+	return result
+}
+
+/* Usage: ./fetchUrl https://qq.com | ./outline */
 func main() {
 	doc, err := html.Parse(os.Stdin)
 	if err != nil {
@@ -36,12 +59,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	url := outline(nil, doc)
-	fmt.Println("url:", url)
-
-	fmt.Println("===========================")
-	result := calSameStringCount(url)
+	//function1, Save all ElementNode in elem, and calculate elem count
+	/*elem := outline(nil, doc)
+	result := calSameStringCount(elem)
 	for str, count := range result {
-		fmt.Printf("str:%s-count:%d\n", str, count)
+		fmt.Printf("string:%s---count:%d\n", str, count)
+	}*/
+
+	//function2, indirect calculate elem count by HTML doc.
+	result := make(map[string] int)
+	calSameStringCount2(result, doc)
+	for str, count := range result {
+		fmt.Printf("string:%s---count:%d\n", str, count)
 	}
 }
