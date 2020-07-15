@@ -22,7 +22,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		b, err := ioutil.ReadAll(resp.Body)
+		body, err := ioutil.ReadAll(resp.Body)
 		resp.Body.Close()
 
 		if err != nil {
@@ -30,6 +30,6 @@ func main() {
 			os.Exit(0)
 		}
 
-		fmt.Printf("HTTP Url body: %s", b)
+		fmt.Printf("HTTP Url body: %s", body)
 	}
 }
