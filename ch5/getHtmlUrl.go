@@ -7,6 +7,10 @@ import (
 	"golang.org/x/net/html"
 )
 
+/*
+练习 5.1： 修改findlinks代码中遍历n.FirstChild链表的部分，将循环调用visit，改成递归调用。
+*/
+
 func visit(links []string, n *html.Node) []string {
 	//fmt.Println("Node type:", n.Type, "Node Data:", n.Data)
 	if n.Type == html.ElementNode && n.Data == "a" {
