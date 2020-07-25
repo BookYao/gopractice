@@ -13,9 +13,10 @@ import (
 
 func visit(links []string, n *html.Node) []string {
 	//fmt.Println("Node type:", n.Type, "Node Data:", n.Data)
-	if n.Type == html.ElementNode && n.Data == "a" {
+	if n.Type == html.ElementNode && (n.Data == "a" || n.Data == "img" || n.Data == "script" || n.Data == "style") {
 		//fmt.Println("Node Attr:", n.Attr)
 		for _, a :=  range n.Attr {
+			//fmt.Println("Key: ", a.Key)
 			if a.Key == "href" {
 				links = append(links, a.Val)
 			}
