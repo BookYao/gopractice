@@ -19,7 +19,7 @@ import (
 func urlParse(url string) (*html.Node, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Parse URL Failed");
+		fmt.Printf("urlParse: Parse URL(%s) Failed.\n", url);
 		return nil, err
 	}
 
@@ -70,7 +70,7 @@ func countWordAndImageFunc(node *html.Node) (words, images int) {
 func countWordsAndImage(url string) (words, image int) {
 	doc, err := urlParse(url)
 	if err != nil {
-		fmt.Println("Parse URL failed")
+		log.Println(fmt.Errorf("countWordsAndImage: URL Parse failed. url:%s-err:%v", url, err))
 		return
 	}
 
