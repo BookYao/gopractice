@@ -89,8 +89,8 @@ func printHtml(url string) error {
 
 
 /*
-Usage: printHtml  https://www.baidu.com
-or  pritnHtml https://qq.com
+Usage: printCopleteHtml  https://www.baidu.com
+or  printCopleteHtml https://qq.com
 */
 func main() {
 	log.Println("Print HTML Node.")
