@@ -13,6 +13,7 @@ import (
 	"strings"
 )
 
+//func stringJoin(delim string, args...string) string {
 func stringJoin(args []string, delim string) string {
 	length := len(args)
 	if length == 0 {
@@ -32,8 +33,10 @@ func stringJoin(args []string, delim string) string {
 }
 
 func main() {
+	//fmt.Println("join string:", stringJoin(":", "first", "second", "third"))
+
 	s1 :=[]string{"first", "second", "third"}
-	fmt.Println("join string:", stringJoin(s1, ":"))
+	fmt.Println("join string:", stringJoin(s1, ":" ))
 	s := []string{"first", "second", "third"}
 	fmt.Println("stringjoin:", strings.Join(s, ":"))
 }
