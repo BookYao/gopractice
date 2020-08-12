@@ -62,6 +62,7 @@ func soleTile(node *html.Node)(title string, err error) {
 	return title, nil
 }
 
+/* Usage: ./panicDemo https://www.sina.com */
 func main() {
 	if (len(os.Args) != 2) {
 		log.Printf("Usage: %s URL string\n", os.Args[0])
