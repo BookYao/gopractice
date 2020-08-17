@@ -98,6 +98,12 @@ func (s *IntSet) Copy() *IntSet {
 	return &result
 }
 
+func (s *IntSet) AddAll(element...int) {
+	for _, val := range element {
+		s.Add(val)
+	}
+}
+
 func main() {
 	var x, y IntSet
 	x.Add(1)
@@ -123,6 +129,9 @@ func main() {
 	fmt.Println("Copy X:", j)
 	x.Clear()
 	fmt.Println("Clear X:", x.String())
+
+	x.AddAll(100, 200, 300)
+	fmt.Println("AddAll x:", x.String())
 }
 
   
