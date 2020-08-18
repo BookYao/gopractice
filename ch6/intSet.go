@@ -1,7 +1,9 @@
 /**
  * @Author: BookYao
  * @Description: Add IntSet operation method
-	练习6.1: 为bit数组实现下面这些方法
+	update1:增加练习6.1: 为bit数组实现下面这些方法
+ 	update2:增加练习6.2. IntersectWith, DifferenceWith, SymmetricDifference, 该版本有一些问题，后续再优化
+    update3:增加练习6.4: 实现一个Elems方法，返回集合中的所有元素
  * @File:  intSet
  * @Version: 1.0.0
  * @Date: 2020/8/17 11:18
@@ -14,6 +16,7 @@ import (
 	"fmt"
 )
 
+const bit = 32 << (^uint(0) >> 63)
 type IntSet struct {
 	words []uint64
 }
@@ -150,6 +153,23 @@ func (s *IntSet) SymmetricDifference(t *IntSet) *IntSet{
 	return &z
 }
 
+func (s *IntSet) Elems () []uint {
+	var z []uint
+
+	for i, word := range s.words {
+		if word == 0 {
+			continue
+		}
+		for j := 0; j < bit; j++ {
+			if word&(1<<uint(j)) != 0 {
+				z = append(z, uint(bit*i+j))
+			}
+		}
+	}
+
+	return z
+}
+
 func main() {
 	var x, y IntSet
 	x.Add(1)
@@ -190,6 +210,10 @@ func main() {
 	fmt.Println("x IntSet:", x.String())
 	fmt.Println("y IntSet:", y.String())
 	fmt.Println("x,y SymmetricDifference IntSet:", z.String())
+
+	fmt.Println("x IntSet:", x.String())
+	t := x.Elems()
+	fmt.Println("Element: ", t)
 
 	x.Clear()
 	fmt.Println("Clear X:", x.String())
