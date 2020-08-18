@@ -104,6 +104,52 @@ func (s *IntSet) AddAll(element...int) {
 	}
 }
 
+func (s *IntSet) IntersectWith(t *IntSet) *IntSet {
+	var z IntSet
+	for i, tword := range t.words {
+		if i < len(s.words) {
+			z.words = append(z.words, s.words[i]&tword)
+		}
+	}
+	return &z
+}
+
+func (s *IntSet) DifferenceWith(t *IntSet) *IntSet {
+	var z IntSet
+	for i, tword := range t.words {
+		if i < len(s.words) {
+			tmp := s.words[i] & tword
+			z.words = append(z.words, s.words[i] - tmp)
+		}
+	}
+	return &z
+}
+
+// SymmetricDifference sets s to the difference of s and t.
+func (s *IntSet) SymmetricDifference(t *IntSet) *IntSet{
+	var z IntSet
+	if len(t.words) == 0 {
+		return s
+	}
+	len1, len2 := len(s.words), len(t.words)
+	n := len1
+	if len1 < len2 {
+		n = len2
+	}
+
+	for i:=0; i<n; i++ {
+		if i < len1 && i < len2 {
+			tmp := s.words[i] & t.words[i]
+			z.words = append(z.words, (s.words[i] - tmp) | (t.words[i] - tmp))
+		} else if i < len1 {
+			z.words = append(z.words, s.words[i])
+		} else {
+			z.words = append(z.words, t.words[i])
+		}
+	}
+	return &z
+}
+
 func main() {
 	var x, y IntSet
 	x.Add(1)
@@ -112,7 +158,7 @@ func main() {
 	x.Add(4)
 	fmt.Println("x.string:", x.String())
 
-	y.Add(10)
+	y.Add(1)
 	y.Add(122)
 	fmt.Println("y.string:", y.String())
 
@@ -127,11 +173,26 @@ func main() {
 
 	j := x.Copy()
 	fmt.Println("Copy X:", j)
-	x.Clear()
-	fmt.Println("Clear X:", x.String())
 
 	x.AddAll(100, 200, 300)
 	fmt.Println("AddAll x:", x.String())
+	z := x.IntersectWith(&y)
+	fmt.Println("x IntSet:", x.String())
+	fmt.Println("y IntSet:", y.String())
+	fmt.Println("x,y Intersect IntSet:", z.String())
+
+	z = x.DifferenceWith(&y)
+	fmt.Println("x IntSet:", x.String())
+	fmt.Println("y IntSet:", y.String())
+	fmt.Println("x,y DifferenceWith IntSet:", z.String())
+
+	z = x.SymmetricDifference(&y)
+	fmt.Println("x IntSet:", x.String())
+	fmt.Println("y IntSet:", y.String())
+	fmt.Println("x,y SymmetricDifference IntSet:", z.String())
+
+	x.Clear()
+	fmt.Println("Clear X:", x.String())
 }
 
   
