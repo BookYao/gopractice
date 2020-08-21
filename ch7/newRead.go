@@ -51,6 +51,8 @@ func main() {
 		n, err = sr.Read(data)
 		fmt.Println(n, string(data[0:n]))
 	}
+
+    fmt.Println("....")
 }
 
   
