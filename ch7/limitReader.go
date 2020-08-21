@@ -56,7 +56,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(n, buf, string(buf))
+	// test.txt： abcdefghijk
+	fmt.Println(n, buf, string(buf))   //5 [97 98 99 100 101 0 0 0 0 0] abcde
 }
 
   
