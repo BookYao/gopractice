@@ -8,7 +8,9 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type celsius float64
 
@@ -47,10 +49,19 @@ func (f *celsiusFlag) Set(s string) error {
 
 func main() {
 	var temp celsiusFlag
-	err := temp.Set("4C")
-	if err== nil {
-		fmt.Println(temp.celsius)
+	err := temp.Set("20C")
+	if err != nil {
+		fmt.Printf("temperature translate error! %v\n", err)
+		return
 	}
+	fmt.Println(temp.celsius)
+
+	err = temp.Set("100F")
+	if err != nil {
+		fmt.Printf("temperature translate error! %v\n", err)
+		return
+	}
+	fmt.Println(temp.celsius)
 
 }
 
