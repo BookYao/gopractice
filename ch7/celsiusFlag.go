@@ -1,6 +1,7 @@
 /**
  * @Author: BookYao
  * @Description: 摄氏度和华氏转换的命令行方法
+Update1: 练习 7.6： 对tempFlag加入支持开尔文温度。
  * @File:  celsiusFlag
  * @Version: 1.0.0
  * @Date: 2020/8/23 23:41
@@ -15,21 +16,25 @@ import (
 
 type celsius float64
 
-type celsiusFlag struct  {
+type celsiusFlag struct {
 	celsius
 }
 
 type Value interface {
-	 String() string
-	 Set(string) error
+	String() string
+	Set(string) error
 }
 
 func Celsius(c celsius) celsius {
-	return (c*9/5+32)
+	return (c*9/5 + 32)
 }
 
 func FToC(f celsius) celsius {
-	return (f-32)*5/9
+	return (f - 32) * 5 / 9
+}
+
+func KToC(f celsius) celsius {
+	return celsius(f - 273.15)
 }
 
 func (f *celsiusFlag) String() string {
@@ -43,11 +48,14 @@ func (f *celsiusFlag) Set(s string) error {
 	fmt.Sscanf(s, "%f%s", &value, &unit)
 	switch unit {
 	case "C":
-	f.celsius = Celsius(value)
-	return nil
+		f.celsius = Celsius(value)
+		return nil
 	case "F":
-	f.celsius = FToC(celsius(value))
-	return nil
+		f.celsius = FToC(celsius(value))
+		return nil
+	case "K":
+		f.celsius = KToC(celsius(value))
+		return nil
 	}
 	return fmt.Errorf("invalid temperature: %q", s)
 }
@@ -85,5 +93,3 @@ func main() {
 	flag.Parse()
 	fmt.Println(*Temp)
 }
-
-  
