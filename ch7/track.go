@@ -1,6 +1,9 @@
 /**
  * @Author: BookYao
  * @Description:
+ update1: 练习 7.8： 很多图形界面提供了一个有状态的多重排序表格插件：主要的排序键是最近一次
+点击过列头的列，第二个排序键是第二最近点击过列头的列，等等。定义一个sort.Interface的
+实现用在这样的表格中。比较这个实现方式和重复使用sort.Stable来排序的方式。
  * @File:  track
  * @Version: 1.0.0
  * @Date: 2020/8/25 23:06
@@ -22,6 +25,13 @@ type Track struct {
 	Album string
 	Year int
 	Length time.Duration
+}
+
+type Multier struct {
+	t []*Track
+	primary string
+	secondary string
+	third string
 }
 
 func length(s string) time.Duration {
@@ -59,6 +69,61 @@ func (x bySortType) Swap(i, j int) {
 	x[i], x[j] =  x[j], x[i]
 }
 
+func (m *Multier) Len() int {
+	return len(m.t)
+}
+
+func (m *Multier) Swap(i, j int) {
+	m.t[i], m.t[j] = m.t[j], m.t[i]
+}
+
+func (m *Multier) Less(i, j int) bool {
+	key := m.primary
+	for k := 0; k < 3; k++ {
+		switch(key) {
+		case "Title":
+			if m.t[i].Title != m.t[j].Title {
+				return m.t[i].Title < m.t[j].Title
+			}
+		case "Year":
+			if m.t[i].Year != m.t[j].Year {
+				return m.t[i].Year < m.t[j].Year
+			}
+		case "Length":
+			if m.t[i].Length != m.t[j].Length {
+				return m.t[i].Length < m.t[j].Length
+			}
+		}
+
+		if k == 0 {
+			key = m.secondary
+		} else if k == 1 {
+			key = m.third
+		}
+	}
+
+	return false
+}
+
+func setPrimary(m *Multier, p string) {
+	m.primary, m.secondary, m.third = p, m.primary, m.secondary
+}
+
+func SetPrimary(x sort.Interface, p string) {
+	if x, ok := x.(*Multier); ok {
+		setPrimary(x, p)
+	}
+}
+
+func NewMultier(t []*Track, p, s, th string) *Multier {
+	return &Multier{
+		t:t,
+		primary:p,
+		secondary:s,
+		third:th,
+	}
+}
+
 func main() {
 	var track = []*Track {
 		{"Go", "Delilah", "From the Roots Up", 2012, length("3m38s")},
@@ -76,6 +141,17 @@ func main() {
 
 	fmt.Println("\n======== Reverse Sort =======\n")
 	sort.Sort(sort.Reverse(bySortType(track)))
+	printTrack(track)
+
+	fmt.Println("\n======== Multier Sort =======\n")
+	multier := NewMultier(track, "Title", "Year", "Length")
+	SetPrimary(multier, "Title")
+	sort.Sort(multier)
+	printTrack(track)
+
+	fmt.Println("\n======== Set Primary Year. Multier Sort =======\n")
+	setPrimary(multier, "Year")
+	sort.Sort(multier)
 	printTrack(track)
 }
 
