@@ -47,13 +47,47 @@ func isPalindrome(s sort.Interface) bool {
 	return true
 }
 
+func stringReverse(s string) string {
+	sLen := len(s)
+	var sSlice []byte
+	for i := 0; i < sLen; i++ {
+		sSlice = append(sSlice, s[sLen - i - 1])
+	}
+
+	return string(sSlice)
+}
+
+func stringReverse2(s string) bool {
+	sLen := len(s)
+	for i, j := 0, sLen - 1; i < j; i, j = i + 1, j - 1 {
+		if s[i] != s[j] {
+			return false
+		}
+	}
+
+	return true
+}
 func main() {
 	var s StringSlice = "goog"
 	fmt.Println("s:", s)
+	fmt.Println("s[0]:", s[0])
 	if isPalindrome(s) == true {
 		fmt.Println("Is Palindrome")
 	} else {
 		fmt.Println("Not Palindrome")
+	}
+
+	var str string = "googe"
+	if str == stringReverse(str) {
+		fmt.Println("String Reverse. Is Palindrome")
+	} else  {
+		fmt.Println("String Reverse. Not Palindrome")
+	}
+
+	if stringReverse2(str) == true {
+		fmt.Println("Reverse2 Is Palindrome")
+	} else  {
+		fmt.Println("Reverse2, Not Palindrome")
 	}
 }
 
