@@ -3,6 +3,10 @@
  * @Description: 练习 7.11： 增加额外的handler让客服端可以创建，读取，更新和删除数据库记录。例如，一
 个形如 /update?item=socks&price=6 的请求会更新库存清单里一个货品的价格并且当这个货
 品不存在或价格无效时返回一个错误值。（注意：这个修改会引入变量同时更新的问题）
+
+ Update1: 练习 7.12： 修改/list的handler让它把输出打印成一个HTML的表格而不是文本。
+html/template包(§4.6)可能会对你有帮助。
+增加 ListHtml 接口， html 模板文件 list.html
  * @File:  httpDemo
  * @Version: 1.0.0
  * @Date: 2020/8/28 10:30
@@ -12,6 +16,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"strconv"
@@ -61,6 +66,20 @@ func (db database) List(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (db database) ListHtml(w http.ResponseWriter, r *http.Request) {
+	temp1, err := template.ParseFiles("list.html")
+	if err != nil {
+		fmt.Println("create template failed, err:", err)
+		return
+	}
+
+	var str string
+	for item, price := range db {
+		str = fmt.Sprintf("%s: %.2f\n", item, price)
+		temp1.Execute(w, str)
+	}
+}
+
 func (db database) Price(w http.ResponseWriter, r *http.Request) {
 	item := r.URL.Query().Get("item")
 	price, ok := db[item]
@@ -103,6 +122,8 @@ func main() {
 	http.HandleFunc("/list", db.List)
 	http.HandleFunc("/price", db.Price)
 	http.HandleFunc("/update", db.Update)
+
+	http.HandleFunc("/listHtml", db.ListHtml)
 	log.Fatal(http.ListenAndServe("192.168.50.132:8003", nil))
 }
 
