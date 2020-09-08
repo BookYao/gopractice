@@ -2,6 +2,8 @@
  * @Author: BookYao
  * @Description:
   提取某个路径下的图片的缩略图
+  update1: add thumbnailVer2
+  update2: add thumbnailVer3
  * @File:  thumbnail
  * @Version: 1.0.0
  * @Date: 2020/9/8 16:31
@@ -63,6 +65,50 @@ func makeThumbnail(pic []string) {
 	}
 }
 
+func makeThumbnailVer2(pic []string) {
+	ch := make(chan struct{})
+	for _, f := range pic {
+		go func(f string) {
+			if _, err := thumbnail.ImageFile(f); err != nil {
+				log.Printf("make thumbnail ver2 failed. picName:%s-err:%v\n", f, err)
+			}
+			ch <- struct{}{}
+		}(f)
+	}
+
+	for range pic {
+		<- ch
+	}
+
+}
+
+func makeTHumbnailVer3(pic []string) (thumbFiles []string, err error) {
+	type item struct {
+		thumbfile string
+		err error
+	}
+
+	ch := make(chan item, len(pic))
+	for _, f := range pic {
+		go func(f string) {
+			var it item
+			it.thumbfile, it.err = thumbnail.ImageFile(f)
+			ch <- it
+		}(f)
+	}
+
+	for range pic {
+		it := <-ch
+		if it.err != nil {
+			return nil, it.err
+		}
+
+		thumbFiles = append(thumbFiles, it.thumbfile)
+	}
+
+	return thumbFiles, nil
+}
+
 func main() {
 	dirname := "./picDir"
 	allPic, err := getAllPic(dirname)
@@ -70,7 +116,14 @@ func main() {
 		log.Printf("getAllPic failed. dirName:%s\n", dirname)
 	}
 	log.Println(allPic)
-	makeThumbnail(allPic)
+	//makeThumbnail(allPic)
+	//makeThumbnailVer2(allPic)
+
+	thumbFiles, err := makeTHumbnailVer3(allPic)
+	if err != nil {
+		fmt.Printf("make Thumbnail Ver3 failed. err:%v\n", err)
+	}
+	fmt.Println("ThumbFiles: ", thumbFiles)
 }
 
   
