@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"gopl.io/ch8/thumbnail"
 )
 
 func getAllPic(dirname string) (pic []string, err error){
@@ -44,7 +45,8 @@ func getAllPic(dirname string) (pic []string, err error){
 			}
 		} else {
 			//fmt.Println("infoName:", info.Name())
-			pic = append(pic, info.Name())
+			fullName := dirname + separator + info.Name()
+			pic = append(pic, fullName)
 		}
 	}
 
@@ -52,18 +54,23 @@ func getAllPic(dirname string) (pic []string, err error){
 	return pic, nil
 }
 
-func thumbnail() {
-	return
+func makeThumbnail(pic []string) {
+	for _, f := range pic {
+		_, err := thumbnail.ImageFile(f)
+		if err != nil {
+			log.Printf("make thumbnail failed. picName:%s-err:%v\n", f, err)
+		}
+	}
 }
 
 func main() {
-	dirname := "."
+	dirname := "./picDir"
 	allPic, err := getAllPic(dirname)
 	if err != nil {
 		log.Printf("getAllPic failed. dirName:%s\n", dirname)
 	}
 	log.Println(allPic)
-	thumbnail()
+	makeThumbnail(allPic)
 }
 
   
