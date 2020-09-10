@@ -4,6 +4,7 @@
   提取某个路径下的图片的缩略图
   update1: add thumbnailVer2
   update2: add thumbnailVer3
+  update3: add thumbnailVer4
  * @File:  thumbnail
  * @Version: 1.0.0
  * @Date: 2020/9/8 16:31
@@ -16,6 +17,7 @@ import (
 	"log"
 	"os"
 	"gopl.io/ch8/thumbnail"
+	"sync"
 )
 
 func getAllPic(dirname string) (pic []string, err error){
@@ -109,6 +111,37 @@ func makeTHumbnailVer3(pic []string) (thumbFiles []string, err error) {
 	return thumbFiles, nil
 }
 
+func makeThumbnailVer4(filename <- chan string) int64 {
+	sizes := make(chan int64)
+	var wg sync.WaitGroup
+	for f := range filename {
+		wg.Add(1)
+		go func(f string) {
+			defer wg.Done()
+			thumb, err := thumbnail.ImageFile(f)
+			if err != nil {
+				fmt.Println("333")
+				log.Printf("thumbnail failed. err:%v\n", err)
+				return
+			}
+			fmt.Println("thumb:", thumb)
+			info, _ := os.Stat(thumb)
+			sizes <- info.Size()
+		}(f)
+	}
+
+	go func() {
+		wg.Wait()
+		close(sizes)
+	}()
+
+	var total int64
+	for size := range sizes {
+		total += size
+	}
+	return total
+}
+
 func main() {
 	dirname := "./picDir"
 	allPic, err := getAllPic(dirname)
@@ -119,11 +152,22 @@ func main() {
 	//makeThumbnail(allPic)
 	//makeThumbnailVer2(allPic)
 
-	thumbFiles, err := makeTHumbnailVer3(allPic)
+	/*thumbFiles, err := makeTHumbnailVer3(allPic)
 	if err != nil {
 		fmt.Printf("make Thumbnail Ver3 failed. err:%v\n", err)
 	}
-	fmt.Println("ThumbFiles: ", thumbFiles)
+	fmt.Println("ThumbFiles: ", thumbFiles)*/
+
+	picChan := make(chan string, len(allPic))
+	go func() {
+		for _, pic := range allPic {
+			picChan <- pic
+		}
+		close(picChan)
+	}()
+
+	total := makeThumbnailVer4(picChan)
+	fmt.Printf("total:%d\n", total)
 }
 
   
